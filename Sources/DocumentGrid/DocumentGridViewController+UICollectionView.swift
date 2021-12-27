@@ -81,7 +81,7 @@ extension DocumentCollectionViewCell {
     func setup(item: DocumentGridItem) {
         
         let size = self.bounds.size
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, *), item.docType != .image {
             guard let url = item.pdfURL else { return }
             self.generateThumbnail(url: url,
                                    size: size,
@@ -128,22 +128,4 @@ extension DocumentCollectionViewCell {
             }
         }
     }
-    
-//    private func pdfThumbnail(url: URL, width: CGFloat = 240) -> UIImage? {
-//        guard let data = try? Data(contentsOf: url),
-//              let page = PDFDocument(data: data)?.page(at: 0) else {
-//                  return nil
-//              }
-//
-//        let pageSize = page.bounds(for: .mediaBox)
-//        let pdfScale = width / pageSize.width
-//
-//        // Apply if you're displaying the thumbnail on screen
-//        let scale = UIScreen.main.scale * pdfScale
-//        let screenSize = CGSize(width: pageSize.width * scale,
-//                                height: pageSize.height * scale)
-//
-//        return page.thumbnail(of: screenSize, for: .mediaBox)
-//    }
 }
-

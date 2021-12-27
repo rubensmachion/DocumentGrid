@@ -110,20 +110,41 @@ open class DocumentGridViewController: UIViewController {
         self.list.append(item)
         let index = IndexPath(item: self.list.count - 1, section: 0)
         self.documentColletionView.insertItems(at: [index])
+        self.didAddNew(item: item)
     }
     
     public func removeItemAt(indexPath: IndexPath) {
         let item = self.itemAt(indexPath: indexPath)
-        self.willRemoveItem(item: item) { accept in
+        self.canRemoveItem(item: item) { accept in
             if accept {
                 self.list.remove(at: indexPath.item)
                 self.documentColletionView.deleteItems(at: [indexPath])
+                self.didRemoveItem(item: item)
             }
         }
     }
     
-    open func willRemoveItem(item: DocumentGridItem, completion: @escaping ((_ accept: Bool)->())) {
+    // MARK: - Open methods
+    open var navigationBarTitle: String {
+        return "Document Grid ViewController"
+    }
+    open func setupNavBar() {
+        self.navigationItem.title = self.navigationBarTitle
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
+                                                                 target: self,
+                                                                 action: #selector(DocumentGridViewController.actionAddNew))
+    }
+    
+    open func canRemoveItem(item: DocumentGridItem, completion: @escaping ((_ accept: Bool)->())) {
         completion(true)
+    }
+    
+    open func didRemoveItem(item: DocumentGridItem) {
+        
+    }
+    
+    open func didAddNew(item: DocumentGridItem) {
+        
     }
 }
 
@@ -144,13 +165,6 @@ extension DocumentGridViewController {
         self.documentColletionView.addGestureRecognizer(tapGesture)
     }
     
-    private func setupNavBar() {
-        self.navigationItem.title = "Documentos"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
-                                                                 target: self,
-                                                                 action: #selector(DocumentGridViewController.actionAddNew))
-    }
-    
     private func setupCollectionView() {
         self.view.addSubview(self.documentColletionView)
         NSLayoutConstraint.activate([
@@ -166,15 +180,19 @@ extension DocumentGridViewController {
 extension DocumentGridViewController {
     
     @objc open func openCamera(controller: DocumentGridViewController) {
-        fatalError("\(#function) not implemented")
+        self.showUIImagePicker(sourceType: .camera,
+                               allowsEditing: true,
+                               delegate: self)
     }
     
     @objc open func openGalery(controller: DocumentGridViewController) {
-        fatalError("\(#function) not implemented")
+        self.showUIImagePicker(sourceType: .photoLibrary,
+                               allowsEditing: false,
+                               delegate: self)
     }
     
     @objc open func openDocument(controller: DocumentGridViewController) {
-        fatalError("\(#function) not implemented")
+        self.showFiles()
     }
 }
 
