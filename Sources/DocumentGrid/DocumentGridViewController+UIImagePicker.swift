@@ -23,7 +23,8 @@ extension UIViewController {
         } else {
 #if targetEnvironment(simulator)
             self.showUIImagePicker(sourceType: .photoLibrary,
-                                   allowsEditing: allowsEditing)
+                                   allowsEditing: allowsEditing,
+                                   delegate: delegate)
 #endif
         }
     }

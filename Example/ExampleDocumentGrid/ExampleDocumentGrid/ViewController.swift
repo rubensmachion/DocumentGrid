@@ -28,21 +28,11 @@ class ViewController: UIViewController {
 // MARK: -
 final public class TestDocumentGridViewController: DocumentGridViewController {
     
-//    public override func openCamera(controller: DocumentGridViewController) {
-//        self.showUIImagePicker(sourceType: .camera,
-//                               allowsEditing: true,
-//                               delegate: self)
-//    }
-//
-//    public override func openGalery(controller: DocumentGridViewController) {
-//        self.showUIImagePicker(sourceType: .photoLibrary,
-//                               allowsEditing: false,
-//                               delegate: self)
-//    }
-//
-//    public override func openDocument(controller: DocumentGridViewController) {
-//        self.showFiles()
-//    }
+    public override func didAddNew(item: DocumentGridItem) {
+        self.uploadManager(item: item) { progress in
+            self.uploadItem(item: item, progress: progress)
+        }
+    }
     
     public override func canRemoveItem(item: DocumentGridItem, completion: @escaping ((Bool) -> ())) {
         
@@ -59,5 +49,29 @@ final public class TestDocumentGridViewController: DocumentGridViewController {
                                       style: .cancel,
                                       handler: nil)
                        ])
+    }
+}
+
+extension TestDocumentGridViewController {
+    
+    private func uploadManager(item: DocumentGridItem, progress: @escaping ProgressBlock) {
+        DispatchQueue.global(qos: .background).async {
+            var prog = 0.0
+            forLoop: for i in 0...100 {
+                sleep(1)
+                prog = (Double(i)/Double(100))*Double(i)
+                print("Thread: \(Thread.current), progress: \(prog)")
+                if prog >= 1.0 {
+                    DispatchQueue.main.async {
+                        progress(prog)
+                    }
+                    break forLoop
+                } else {
+                    DispatchQueue.main.async {
+                        progress(prog)
+                    }
+                }
+            }
+        }
     }
 }

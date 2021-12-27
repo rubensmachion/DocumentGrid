@@ -7,6 +7,8 @@
 
 import UIKit
 
+public typealias ProgressBlock = (_ progress: Double) -> Void
+
 // MARK: - DocumentGridViewControllerDelegate
 public protocol DocumentGridViewControllerDelegate: AnyObject {
     
@@ -78,12 +80,14 @@ open class DocumentGridViewController: UIViewController {
     @objc private func longGesture(_ gesture: UIGestureRecognizer) {
         if gesture is UITapGestureRecognizer {
             if self.documentColletionView.allowsMultipleSelection {
+                UINotificationFeedbackGenerator().notificationOccurred(UINotificationFeedbackGenerator.FeedbackType.warning)
                 self.documentColletionView.allowsMultipleSelection = false
                 self.documentColletionView.reloadData()
             }
         } else if gesture is UILongPressGestureRecognizer {
             switch gesture.state {
             case .began:
+                UINotificationFeedbackGenerator().notificationOccurred(UINotificationFeedbackGenerator.FeedbackType.success)
                 if !self.documentColletionView.allowsMultipleSelection {
                     self.documentColletionView.allowsMultipleSelection = true
                 } else {
@@ -122,6 +126,13 @@ open class DocumentGridViewController: UIViewController {
                 self.didRemoveItem(item: item)
             }
         }
+    }
+    
+    public func uploadItem(item: DocumentGridItem, progress: Double) {
+        guard let index = self.list.firstIndex(where: { $0.id == item.id }) else { return }
+        let indexPath = IndexPath(item: index, section: 0)
+        self.list[index].progress = progress
+        self.documentColletionView.reloadItems(at: [indexPath])
     }
     
     // MARK: - Open methods

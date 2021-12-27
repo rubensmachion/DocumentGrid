@@ -24,16 +24,20 @@ public struct DocumentGridItem {
         }
     }
     
+    public var id: String!
     public var image: UIImage? = nil
     public var pdfURL: URL? = nil
     public var docType: DocType!
+    public var progress: Double = 0.0
     
     public init(image: UIImage) {
+        self.id = UUID().uuidString
         self.image = image
         self.docType = .image
     }
     
     public init(pdf url: URL) {
+        self.id = UUID().uuidString
         self.pdfURL = url
         self.docType = .pdf
     }
@@ -54,16 +58,16 @@ extension DocumentGridViewController: UICollectionViewDataSource {
                                                       for: indexPath) as! DocumentCollectionViewCell
         cell.setup(item: item)
         cell.setDelete(enable: collectionView.allowsMultipleSelection)
+        if collectionView.allowsMultipleSelection {
+            cell.shake()
+        } else {
+            cell.stopShake()
+        }
         cell.willRemove = { [weak self] c in
             guard let index = collectionView.indexPath(for: c) else {
                 return
             }
             self?.removeItemAt(indexPath: index)
-        }
-        if collectionView.allowsMultipleSelection {
-            cell.shake()
-        } else {
-            cell.stopShake()
         }
         
         return cell
@@ -80,6 +84,7 @@ extension DocumentCollectionViewCell {
     
     func setup(item: DocumentGridItem) {
         
+        self.progressValue = item.progress
         let size = self.bounds.size
         if #available(iOS 13.0, *), item.docType != .image {
             guard let url = item.pdfURL else { return }

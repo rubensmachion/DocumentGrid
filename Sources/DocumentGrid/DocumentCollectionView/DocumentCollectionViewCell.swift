@@ -12,6 +12,16 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
 
     public static let identifier = String(describing: DocumentCollectionViewCell.self)
     
+    internal lazy var circularProgress: CircularProgressView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.trackLineWidth = 4.0
+        $0.trackTintColor = UIColor.lightGray
+        $0.progressTintColor = self.tintColor
+        $0.roundedProgressLineCap = true
+        $0.isHidden = true
+        return $0
+    }(CircularProgressView(frame: .zero))
+    
     internal lazy var buttonDelete: UIButton = {
         if #available(iOS 13.0, *) {
             $0.backgroundColor = .systemBackground
@@ -38,6 +48,16 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
     }(UIImageView())
     
     public var willRemove: ((_ cell: DocumentCollectionViewCell)->())? = nil
+    public var progressValue: Double! = 0.0 {
+        didSet {
+            self.circularProgress.progress = Float(self.progressValue)
+            if self.progressValue > 0.0 && self.progressValue < 1.0 {
+                self.circularProgress.isHidden = false
+            } else {
+                self.circularProgress.isHidden = true
+            }
+        }
+    }
     
     // MARK: - Init
     override public init(frame: CGRect) {
@@ -69,6 +89,7 @@ extension DocumentCollectionViewCell {
         self.contentView.backgroundColor = .groupTableViewBackground
         self.setupThumb()
         self.setupButtonDelete()
+        self.setupCircularProgress()
     }
     
     private func setupThumb() {
@@ -91,6 +112,17 @@ extension DocumentCollectionViewCell {
                                                      constant: 8.0),
             self.buttonDelete.widthAnchor.constraint(equalToConstant: 29.0),
             self.buttonDelete.heightAnchor.constraint(equalToConstant: 29.0)
+        ])
+    }
+    
+    private func setupCircularProgress() {
+        self.contentView.addSubview(self.circularProgress)
+        
+        NSLayoutConstraint.activate([
+            self.circularProgress.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -8.0),
+            self.circularProgress.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8.0),
+            self.circularProgress.widthAnchor.constraint(equalToConstant: 30.0),
+            self.circularProgress.heightAnchor.constraint(equalToConstant: 30.0)
         ])
     }
 }
