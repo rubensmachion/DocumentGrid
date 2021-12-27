@@ -26,21 +26,42 @@ public struct DocumentGridItem {
     
     public var id: String!
     public var image: UIImage? = nil
-    public var pdfURL: URL? = nil
+    public var url: URL? = nil
     public var docType: DocType!
     public var progress: Double = 0.0
+    public var data: Data? = nil
     
     public init(image: UIImage) {
         self.id = UUID().uuidString
         self.image = image
+        self.data = image.jpegData(compressionQuality: 0.7)
         self.docType = .image
     }
     
     public init(pdf url: URL) {
         self.id = UUID().uuidString
-        self.pdfURL = url
+        self.url = url
         self.docType = .pdf
     }
+    
+    public init(document: Document) {
+        self.id = UUID().uuidString
+        self.data = document.data
+        self.url = document.fileURL
+        if document.fileType?.contains("pdf") ?? false {
+            self.docType = .pdf
+        } else if document.fileType?.contains("png") ?? false ||
+                    document.fileType?.contains("jpg") ?? false ||
+                    document.fileType?.contains("jpeg") ?? false {
+            self.docType = .image
+        } else {
+            self.docType = .none
+        }
+    }
+}
+
+extension Document {
+    
 }
 
 extension DocumentGridViewController: UICollectionViewDataSource {
@@ -86,8 +107,7 @@ extension DocumentCollectionViewCell {
         
         self.progressValue = item.progress
         let size = self.bounds.size
-        if #available(iOS 13.0, *), item.docType != .image {
-            guard let url = item.pdfURL else { return }
+        if #available(iOS 13.0, *), let url = item.url{
             self.generateThumbnail(url: url,
                                    size: size,
                                    scale: UIScreen.main.scale) { image in
@@ -97,11 +117,13 @@ extension DocumentCollectionViewCell {
         } else {
             switch item.docType {
             case .image:
-                self.thumbImage.contentMode = .scaleAspectFill
-                if #available(iOS 15.0, *) {
-                    self.thumbImage.image = item.image?.preparingThumbnail(of: size)
-                } else {
-                    self.thumbImage.image = item.image
+                self.thumbImage.contentMode = .scaleAspectFit
+                if let data = item.data, let image = UIImage(data: data) {
+                    if #available(iOS 15.0, *) {
+                        self.thumbImage.image = image.preparingThumbnail(of: size)
+                    } else {
+                        self.thumbImage.image = image
+                    }
                 }
                 break
             default:

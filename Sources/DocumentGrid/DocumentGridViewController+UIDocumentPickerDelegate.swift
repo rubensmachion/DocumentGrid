@@ -29,8 +29,8 @@ extension DocumentGridViewController: UIDocumentPickerDelegate {
                                didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true, completion: nil)
         guard controller.documentPickerMode == .import, let url = urls.first/*, url.startAccessingSecurityScopedResource()*/ else { return }
-
-        let item = DocumentGridItem(pdf: url)
+        let document = Document(fileURL: url)
+        let item = DocumentGridItem(document: document)
         self.addNewItem(item: item)
     }
 }

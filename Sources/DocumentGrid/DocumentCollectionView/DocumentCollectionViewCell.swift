@@ -29,7 +29,7 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
             $0.backgroundColor = .white
         }
         $0.tintColor = .gray
-        $0.layer.cornerRadius = 15.0
+        $0.layer.cornerRadius = 18.0
         $0.setImage(UIImage(named: "closeButton",
                             in: Bundle.module,
                             compatibleWith: nil),
@@ -53,8 +53,10 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
             self.circularProgress.progress = Float(self.progressValue)
             if self.progressValue > 0.0 && self.progressValue < 1.0 {
                 self.circularProgress.isHidden = false
+                self.thumbImage.alpha = 0.5
             } else {
                 self.circularProgress.isHidden = true
+                self.thumbImage.alpha = 1.0
             }
         }
     }
@@ -79,7 +81,11 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
     }
     
     public func setDelete(enable: Bool) {
-        self.buttonDelete.isHidden = !enable
+        if (self.progressValue == 0.0 || self.progressValue >= 1.0) {
+            self.buttonDelete.isHidden = !enable
+        } else {
+            self.buttonDelete.isHidden = true
+        }
     }
 }
 
@@ -121,8 +127,8 @@ extension DocumentCollectionViewCell {
         NSLayoutConstraint.activate([
             self.circularProgress.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -8.0),
             self.circularProgress.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8.0),
-            self.circularProgress.widthAnchor.constraint(equalToConstant: 30.0),
-            self.circularProgress.heightAnchor.constraint(equalToConstant: 30.0)
+            self.circularProgress.widthAnchor.constraint(equalToConstant: 36.0),
+            self.circularProgress.heightAnchor.constraint(equalToConstant: 36.0)
         ])
     }
 }

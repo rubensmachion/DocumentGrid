@@ -192,7 +192,7 @@ extension DocumentGridViewController {
     
     @objc open func openCamera(controller: DocumentGridViewController) {
         self.showUIImagePicker(sourceType: .camera,
-                               allowsEditing: true,
+                               allowsEditing: false,
                                delegate: self)
     }
     
