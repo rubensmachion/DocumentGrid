@@ -10,14 +10,16 @@ import DocumentGrid
 import MobileCoreServices
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     @IBAction func actionShowDocumentGrid(_ sender: Any?) {
         let vc = TestDocumentGridViewController(with: [
-            .camera, .galery, .document
+            .camera,
+            .galery,
+            .document
         ])
         
         self.navigationController?.pushViewController(vc, animated: true)
@@ -68,10 +70,10 @@ extension TestDocumentGridViewController: UIImagePickerControllerDelegate, UINav
             
             self.present(i, animated: true, completion: nil)
         } else {
-            #if targetEnvironment(simulator)
+#if targetEnvironment(simulator)
             self.showUIImagePicker(sourceType: .photoLibrary,
                                    allowsEditing: allowsEditing)
-            #endif
+#endif
         }
     }
     
@@ -80,7 +82,7 @@ extension TestDocumentGridViewController: UIImagePickerControllerDelegate, UINav
     }
     
     public func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                                      didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: {
             var image: UIImage!
             if info[.editedImage] != nil {
@@ -117,5 +119,9 @@ extension TestDocumentGridViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController,
                                didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true, completion: nil)
+        guard controller.documentPickerMode == .import, let url = urls.first/*, url.startAccessingSecurityScopedResource()*/ else { return }
+
+        let item = DocumentGridItem(pdf: url)
+        self.addNewItem(item: item)
     }
 }
