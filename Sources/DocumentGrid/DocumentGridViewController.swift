@@ -25,7 +25,16 @@ open class DocumentGridViewController: UIViewController {
     
     private var documentGridAddOptions: [DocumentGridAddOption] = []
     
-    private var list: [DocumentGridItem] = []
+    private var list: [DocumentGridItem] {
+        set{
+            DocumentGridItems.shared.list = newValue
+        }
+        get {
+            return DocumentGridItems.shared.list
+        }
+    }
+    
+    private var startUploadWhenAdded: Bool!
     
     // MARK: - Delegate
     public weak var delegate: DocumentGridViewControllerDelegate? = nil
@@ -58,9 +67,15 @@ open class DocumentGridViewController: UIViewController {
                              collectionViewLayout: self.collectionViewLayout))
     
     // MARK: - Init
-    public init(with options: [DocumentGridAddOption]) {
+    public init(with options: [DocumentGridAddOption],
+                clearList: Bool = true,
+                startUploadWhenAdded: Bool = true) {
         super.init(nibName: nil, bundle: nil)
         self.documentGridAddOptions = options
+        self.startUploadWhenAdded = startUploadWhenAdded
+        if clearList {
+            DocumentGridItems.shared.clearList()
+        }
     }
     
     required public init?(coder: NSCoder) {
@@ -114,7 +129,7 @@ open class DocumentGridViewController: UIViewController {
         self.list.append(item)
         let index = IndexPath(item: self.list.count - 1, section: 0)
         self.documentColletionView.insertItems(at: [index])
-        self.didAddNew(item: item)
+        self.didAddNew(item: item, startUploadWhenAdded: self.startUploadWhenAdded)
     }
     
     public func removeItemAt(indexPath: IndexPath) {
@@ -150,13 +165,9 @@ open class DocumentGridViewController: UIViewController {
         completion(true)
     }
     
-    open func didRemoveItem(item: DocumentGridItem) {
-        
-    }
+    open func didRemoveItem(item: DocumentGridItem) {}
     
-    open func didAddNew(item: DocumentGridItem) {
-        
-    }
+    open func didAddNew(item: DocumentGridItem, startUploadWhenAdded: Bool) {}
 }
 
 // MARK: - SetupViews

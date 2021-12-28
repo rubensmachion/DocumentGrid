@@ -92,7 +92,6 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
 // MARK: - DocumentCollectionViewCell
 extension DocumentCollectionViewCell {
     private func setupViews() {
-        self.contentView.backgroundColor = .groupTableViewBackground
         self.setupThumb()
         self.setupButtonDelete()
         self.setupCircularProgress()
@@ -125,8 +124,8 @@ extension DocumentCollectionViewCell {
         self.contentView.addSubview(self.circularProgress)
         
         NSLayoutConstraint.activate([
-            self.circularProgress.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -8.0),
-            self.circularProgress.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -8.0),
+            self.circularProgress.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            self.circularProgress.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
             self.circularProgress.widthAnchor.constraint(equalToConstant: 36.0),
             self.circularProgress.heightAnchor.constraint(equalToConstant: 36.0)
         ])

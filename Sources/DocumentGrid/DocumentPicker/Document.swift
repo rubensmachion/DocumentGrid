@@ -7,23 +7,19 @@
 
 import UIKit
 
-final public class Document: UIDocument {
+final public class Document: NSObject {
     
     var data: Data?
+    var fileURL: URL!
+    var fileType: String?
     
-    override public init(fileURL url: URL) {
-        super.init(fileURL: url)
-        self.data = try? Data(contentsOf: url)
-    }
-    
-    public override func contents(forType typeName: String) throws -> Any {
-        guard let data = data else { return Data() }
-        return try NSKeyedArchiver.archivedData(withRootObject:data,
-                                                requiringSecureCoding: true)
-    }
-    public override func load(fromContents contents: Any,
-                              ofType typeName: String?) throws {
-        guard let data = contents as? Data else { return }
-        self.data = data
+    public init(fileURL url: URL) {
+
+        super.init()
+        self.fileURL = url
+        self.fileType = url.pathExtension
+        if url.isFileURL {
+            self.data = try? Data(contentsOf: url)
+        }
     }
 }
