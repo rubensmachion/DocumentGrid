@@ -36,6 +36,15 @@ public class DocumentGridItem: NSObject {
                 return UIImage.image(named: "ic_jpg")
             }
         }
+        
+        public var localized: String {
+            switch self {
+            case .pdf:
+                return "Arquivo PDF"
+            case .image:
+                return "Imagem"
+            }
+        }
     }
     
     public var id: String!
@@ -43,6 +52,7 @@ public class DocumentGridItem: NSObject {
     public var url: URL? = nil
     public var docType: DocType!
     public var progress: Double = 0.0
+    public var downloaded: Bool = false
     public var data: Data? = nil
     
     public init(image: UIImage) {
@@ -74,6 +84,17 @@ public class DocumentGridItem: NSObject {
     }
 }
 
+// MARK: - QuickLook
+extension DocumentGridItem: QLPreviewItem {
+    public var previewItemURL: URL? {
+        return self.url
+    }
+    
+    public var previewItemTitle: String? {
+        return self.docType.localized
+    }
+}
+
 // MARK: - File Manager: DocumentGridItem
 extension DocumentGridItem {
     
@@ -92,6 +113,7 @@ extension DocumentGridItem {
                     try FileManager.default.copyItem(at: location!, to: destinationURL)
                     self.url = destinationURL
                     self.data = try Data(contentsOf: destinationURL)
+                    self.downloaded = true
                     completion(true)
                 } catch let error {
                     print("Copy Error: \(error.localizedDescription)")
@@ -137,6 +159,9 @@ extension DocumentGridViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 extension DocumentGridViewController: UICollectionViewDelegate {
     
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.openPreviewAt(index: indexPath)
+    }
 }
 
 // MARK: - DocumentCollectionViewCell+DocumentGridItem

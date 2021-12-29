@@ -34,12 +34,10 @@ open class DocumentGridViewController: UIViewController {
         }
     }
     
-    private var startUploadWhenAdded: Bool!
-    
     // MARK: - Delegate
     public weak var delegate: DocumentGridViewControllerDelegate? = nil
     
-    // MARK: - Views
+    // MARK: - Views    
     private lazy var collectionViewLayout: UICollectionViewFlowLayout = {
         let padding = 5.0
         let size = Int((UIScreen.main.bounds.size.width / 3.0) - (padding * 2.0))
@@ -68,11 +66,9 @@ open class DocumentGridViewController: UIViewController {
     
     // MARK: - Init
     public init(with options: [DocumentGridAddOption],
-                clearList: Bool = true,
-                startUploadWhenAdded: Bool = true) {
+                clearList: Bool = true) {
         super.init(nibName: nil, bundle: nil)
         self.documentGridAddOptions = options
-        self.startUploadWhenAdded = startUploadWhenAdded
         if clearList {
             DocumentGridItems.shared.clearList()
         }
@@ -129,7 +125,7 @@ open class DocumentGridViewController: UIViewController {
         self.list.append(item)
         let index = IndexPath(item: self.list.count - 1, section: 0)
         self.documentColletionView.insertItems(at: [index])
-        self.didAddNew(item: item, startUploadWhenAdded: self.startUploadWhenAdded)
+        self.didAddNew(item: item)
     }
     
     public func removeItemAt(indexPath: IndexPath) {
@@ -167,7 +163,7 @@ open class DocumentGridViewController: UIViewController {
     
     open func didRemoveItem(item: DocumentGridItem) {}
     
-    open func didAddNew(item: DocumentGridItem, startUploadWhenAdded: Bool) {}
+    open func didAddNew(item: DocumentGridItem) {}
 }
 
 // MARK: - SetupViews
@@ -182,9 +178,7 @@ extension DocumentGridViewController {
         self.setupCollectionView()
         
         let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(DocumentGridViewController.longGesture(_:)))
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(DocumentGridViewController.longGesture(_:)))
         self.documentColletionView.addGestureRecognizer(longGesture)
-        self.documentColletionView.addGestureRecognizer(tapGesture)
     }
     
     private func setupCollectionView() {

@@ -37,7 +37,7 @@ class ViewController: UIViewController {
             .camera,
             .galery,
             .document
-        ], clearList: false, startUploadWhenAdded: false)
+        ], clearList: false)
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -47,7 +47,7 @@ class ViewController: UIViewController {
             .camera,
             .galery,
             .document
-        ], clearList: true, startUploadWhenAdded: true)
+        ], clearList: true)
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -57,7 +57,7 @@ class ViewController: UIViewController {
             .camera,
             .galery,
             .document
-        ], clearList: true, startUploadWhenAdded: false)
+        ], clearList: true)
         
         DocumentGridItems.shared.list = self.urlList.map({
             DocumentGridItem(document: Document(fileURL: URL(string: $0)!))
@@ -70,12 +70,10 @@ class ViewController: UIViewController {
 // MARK: -
 final public class TestDocumentGridViewController: DocumentGridViewController {
     
-    public override func didAddNew(item: DocumentGridItem, startUploadWhenAdded: Bool) {
-        if startUploadWhenAdded {
-            self.uploadManager(item: item) { progress in
-                self.uploadItem(item: item, progress: progress)
-            }
-        }
+    public override func didAddNew(item: DocumentGridItem) {
+//        self.uploadManager(item: item) { progress in
+//            self.uploadItem(item: item, progress: progress)
+//        }
     }
     
     public override func canRemoveItem(item: DocumentGridItem, completion: @escaping ((Bool) -> ())) {
