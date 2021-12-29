@@ -68,8 +68,8 @@ public class DocumentGridItem: NSObject {
         self.docType = .pdf
     }
     
-    public init(document: Document) {
-        self.id = UUID().uuidString
+    public init(id: String? = nil, document: Document) {
+        self.id = (id?.isEmpty ?? true) ? UUID().uuidString : id
         self.data = document.data
         self.url = document.fileURL
         if document.fileType?.contains("pdf") ?? false {

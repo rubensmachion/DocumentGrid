@@ -8,16 +8,24 @@
 import UIKit
 import DocumentGrid
 
+struct FileObject {
+    var id: String!
+    var url: String!
+}
+
 class ViewController: UIViewController {
     
-    public var urlList: [String] = [
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPER_PROFILE_IMG_1612891728423_3d3aa24b-2127-4296-be91-71ab3512ad26.jpg",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPER_PROFILE_IMG_1619530218240_740702cd-d951-416d-bef0-ceddee576379.jpg",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/sample.pdf",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/0B460561-F7A1-498C-9927-DC0072AAA648-94522-00002EA2DD0D929D.jpeg",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPIE_FILES_1613011439_5aed5c68-99fe-4d6b-aebf-bdc99eaafa5c.jpg",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/437AF577-C9DD-476D-8CB9-EB1FBB0BC7BB-18108-00000F76B0F868B9.jpeg",
-        "https://dev-compre-e-instale-images-public.s3.amazonaws.com/480421D4-9434-4298-B308-84FC9E09FEF0-5316-00000149514C7C1E.jpeg"
+    public var urlList: [FileObject] = [
+        FileObject(id: "123232323",
+                   url: "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPER_PROFILE_IMG_1612891728423_3d3aa24b-2127-4296-be91-71ab3512ad26.jpg"),
+        FileObject(id: "123232323",
+                   url: "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPER_PROFILE_IMG_1619530218240_740702cd-d951-416d-bef0-ceddee576379.jpg"),
+        FileObject(id: "123232323",
+                   url: "https://dev-compre-e-instale-images-public.s3.amazonaws.com/sample.pdf"),
+        FileObject(id: "123232323",
+                   url: "https://dev-compre-e-instale-images-public.s3.amazonaws.com/0B460561-F7A1-498C-9927-DC0072AAA648-94522-00002EA2DD0D929D.jpeg"),
+        FileObject(id: "123232323",
+                   url: "https://dev-compre-e-instale-images-public.s3.amazonaws.com/HELPIE_FILES_1613011439_5aed5c68-99fe-4d6b-aebf-bdc99eaafa5c.jpg")
     ]
     
     @IBOutlet weak var buttonList: UIButton!
@@ -38,6 +46,7 @@ class ViewController: UIViewController {
             .galery,
             .document
         ], clearList: false)
+        vc.delegate = self
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -48,6 +57,7 @@ class ViewController: UIViewController {
             .galery,
             .document
         ], clearList: true)
+        vc.delegate = self
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -58,17 +68,34 @@ class ViewController: UIViewController {
             .galery,
             .document
         ], clearList: true)
+        vc.delegate = self
         
         DocumentGridItems.shared.list = self.urlList.map({
-            DocumentGridItem(document: Document(fileURL: URL(string: $0)!))
+            DocumentGridItem(id: $0.id,
+                             document: Document(fileURL: URL(string: $0.url)!))
         })
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
+// MARK: - DocumentGridViewControllerDelegate
+extension ViewController: DocumentGridViewControllerDelegate {
+    func documentGrid(willClose viewController: DocumentGridViewController, with files: [DocumentGridItem]) {
+        print(#function)
+    }
+    
+    func documentGrid(didDelete file: DocumentGridItem) {
+        print(#function)
+    }
+}
+
 // MARK: -
 final public class TestDocumentGridViewController: DocumentGridViewController {
+    
+    public override func didRemoveItem(item: DocumentGridItem) {
+        
+    }
     
     public override func didAddNew(item: DocumentGridItem) {
 //        self.uploadManager(item: item) { progress in

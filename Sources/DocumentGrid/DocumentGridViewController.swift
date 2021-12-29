@@ -11,7 +11,8 @@ public typealias ProgressBlock = (_ progress: Double) -> Void
 
 // MARK: - DocumentGridViewControllerDelegate
 public protocol DocumentGridViewControllerDelegate: AnyObject {
-    
+    func documentGrid(willClose viewController: DocumentGridViewController, with files: [DocumentGridItem])
+    func documentGrid(didDelete file: DocumentGridItem)
 }
 
 // MARK: - DocumentGridViewController
@@ -37,7 +38,7 @@ open class DocumentGridViewController: UIViewController {
     // MARK: - Delegate
     public weak var delegate: DocumentGridViewControllerDelegate? = nil
     
-    // MARK: - Views    
+    // MARK: - Views
     private lazy var collectionViewLayout: UICollectionViewFlowLayout = {
         let padding = 5.0
         let size = Int((UIScreen.main.bounds.size.width / 3.0) - (padding * 2.0))
@@ -81,6 +82,11 @@ open class DocumentGridViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.setupViews()
+    }
+    
+    open override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.delegate?.documentGrid(willClose: self, with: self.list)
     }
     
     // MARK: - Navigation
@@ -135,6 +141,7 @@ open class DocumentGridViewController: UIViewController {
                 self.list.remove(at: indexPath.item)
                 self.documentColletionView.deleteItems(at: [indexPath])
                 self.didRemoveItem(item: item)
+                self.delegate?.documentGrid(didDelete: item)
             }
         }
     }
