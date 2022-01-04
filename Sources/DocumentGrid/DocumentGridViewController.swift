@@ -38,6 +38,8 @@ open class DocumentGridViewController: UIViewController {
     // MARK: - Delegate
     public weak var delegate: DocumentGridViewControllerDelegate? = nil
     
+    public var canAddNewFiles: Bool = true
+    
     // MARK: - Views
     private lazy var collectionViewLayout: UICollectionViewFlowLayout = {
         let padding = 5.0
@@ -159,9 +161,11 @@ open class DocumentGridViewController: UIViewController {
     }
     open func setupNavBar() {
         self.navigationItem.title = self.navigationBarTitle
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
-                                                                 target: self,
-                                                                 action: #selector(DocumentGridViewController.actionAddNew))
+        if self.canAddNewFiles {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
+                                                                     target: self,
+                                                                     action: #selector(DocumentGridViewController.actionAddNew))
+        }
     }
     
     open func canRemoveItem(item: DocumentGridItem, completion: @escaping ((_ accept: Bool)->())) {
