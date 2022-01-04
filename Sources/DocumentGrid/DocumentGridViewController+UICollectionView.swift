@@ -171,8 +171,10 @@ extension DocumentCollectionViewCell {
         
         self.progressValue = item.progress
         if item.data == nil {
+            self.activityIndicator.startAnimating()
             item.downloadFile { success in
                 DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
                     if success {
                         self.setup(item: item)
                     } else {

@@ -47,6 +47,13 @@ final public class DocumentCollectionViewCell: UICollectionViewCell {
         return $0
     }(UIImageView())
     
+    internal lazy var activityIndicator: UIActivityIndicatorView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.hidesWhenStopped = true
+        
+        return $0
+    }(UIActivityIndicatorView())
+    
     public var willRemove: ((_ cell: DocumentCollectionViewCell)->())? = nil
     public var progressValue: Double! = 0.0 {
         didSet {
@@ -95,6 +102,7 @@ extension DocumentCollectionViewCell {
         self.setupThumb()
         self.setupButtonDelete()
         self.setupCircularProgress()
+        self.setupActivityIndicator()
     }
     
     private func setupThumb() {
@@ -105,6 +113,15 @@ extension DocumentCollectionViewCell {
             self.thumbImage.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             self.thumbImage.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
             self.thumbImage.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+        ])
+    }
+    
+    private func setupActivityIndicator() {
+        self.contentView.addSubview(self.activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            self.activityIndicator.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            self.activityIndicator.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
         ])
     }
     
