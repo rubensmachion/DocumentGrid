@@ -54,8 +54,18 @@ open class DocumentGridViewController: UIViewController {
         
         return $0
     }(UICollectionViewFlowLayout())
-    
-    private lazy var documentColletionView: DocumentCollectionView = {
+
+    public lazy var hintTopLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 13.0)
+        label.textColor = .gray
+        return label
+    }()
+
+    public lazy var documentColletionView: DocumentCollectionView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.alwaysBounceVertical = true
         $0.allowsMultipleSelection = false
@@ -84,6 +94,15 @@ open class DocumentGridViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.setupViews()
+    }
+
+    open override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if list.count > 0 {
+            hintTopLabel.text = "Segure uma imagem ou documento para removê-lo"
+        } else {
+            hintTopLabel.text = "Toque no botão `+` para adicionar uma nova imagem ou documento"
+        }
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
@@ -193,12 +212,31 @@ extension DocumentGridViewController {
     }
     
     private func setupCollectionView() {
-        self.view.addSubview(self.documentColletionView)
+
+        let labeHintContainerView = UIView()
+        labeHintContainerView.translatesAutoresizingMaskIntoConstraints = false
+        labeHintContainerView.backgroundColor = .clear
+        labeHintContainerView.addSubview(hintTopLabel)
+
+        let vStack = UIStackView()
+        vStack.translatesAutoresizingMaskIntoConstraints = false
+        vStack.axis = .vertical
+        vStack.isLayoutMarginsRelativeArrangement = true
+        vStack.addArrangedSubview(labeHintContainerView)
+        vStack.addArrangedSubview(documentColletionView)
+
+        self.view.addSubview(vStack)
         NSLayoutConstraint.activate([
-            self.documentColletionView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            self.documentColletionView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
-            self.documentColletionView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
-            self.documentColletionView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+            vStack.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            vStack.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
+            vStack.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
+            vStack.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+
+            labeHintContainerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 30.0),
+            hintTopLabel.topAnchor.constraint(equalTo: labeHintContainerView.topAnchor, constant: 10.0),
+            hintTopLabel.bottomAnchor.constraint(equalTo: labeHintContainerView.bottomAnchor, constant: -10.0),
+            hintTopLabel.leadingAnchor.constraint(equalTo: labeHintContainerView.leadingAnchor, constant: 10.0),
+            hintTopLabel.trailingAnchor.constraint(equalTo: labeHintContainerView.trailingAnchor, constant: -10.0)
         ])
     }
 }
