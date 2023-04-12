@@ -140,10 +140,12 @@ extension DocumentGridViewController: UICollectionViewDataSource {
                                                       for: indexPath) as! DocumentCollectionViewCell
         cell.setup(item: item)
         cell.setDelete(enable: collectionView.allowsMultipleSelection)
-        if collectionView.allowsMultipleSelection {
-            cell.shake()
-        } else {
-            cell.stopShake()
+        if canAddNewFiles {
+            if collectionView.allowsMultipleSelection {
+                cell.shake()
+            } else {
+                cell.stopShake()
+            }
         }
         cell.willRemove = { [weak self] c in
             guard let index = collectionView.indexPath(for: c) else {
