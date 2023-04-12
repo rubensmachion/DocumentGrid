@@ -139,8 +139,8 @@ extension DocumentGridViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DocumentCollectionViewCell.identifier,
                                                       for: indexPath) as! DocumentCollectionViewCell
         cell.setup(item: item)
-        cell.setDelete(enable: collectionView.allowsMultipleSelection)
         if canAddNewFiles {
+            cell.setDelete(enable: collectionView.allowsMultipleSelection)
             if collectionView.allowsMultipleSelection {
                 cell.shake()
             } else {
